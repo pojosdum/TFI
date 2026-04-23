@@ -104,14 +104,27 @@ def calculate_tfi():
     # Guardado de los datos en CSV
         csv_file = r"C:\Users\Omobe\OneDrive\Documentos\AaUniversity\REPOS\TFI\historico_tfi.csv"
         file_exists = os.path.isfile(csv_file)
-
-        with open(csv_file, mode='a', newline='') as file:
-            writer = csv.writer(file)
-            if not file_exists:
-                writer.writerow(["Date", "TFI Value"]) 
+        today_str = datetime.now().strftime('%Y-%m-%d')
+        
+        already_logged = False
+        if file_exists:
+            with open(csv_file, mode='r', newline='') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    if row and row[0] == today_str:
+                        already_logged = True
+                        break
+        
+        if not already_logged:
+            with open(csv_file, mode='a', newline='') as file:
+                writer = csv.writer(file)
+                if not file_exists:
+                    writer.writerow(["Date", "TFI Value"]) 
             
-            writer.writerow([datetime.now().strftime('%Y-%m-%d'), f"{tfi_index:.2f}"])
-            print(f"Datos casados a {csv_file}")
+                writer.writerow([today_str, f"{tfi_index:.2f}"])
+                print(f"Datos casados a {csv_file}")
+        else:
+            print(f"Ya se ha registrado el TFI para hoy {today_str}")
     else:
         print(f"\nWarning: Solo {found_stations} de {len(basket)} gasolineras.")
 
